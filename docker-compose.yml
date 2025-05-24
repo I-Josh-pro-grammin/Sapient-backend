@@ -8,7 +8,9 @@ services:
       POSTGRES_PASSWORD: 123
       POSTGRES_DB: nest
     networks:
-      - nest-network 
+      - nest-network
+      
+       
   test-db:
     image: postgres:15
     ports:

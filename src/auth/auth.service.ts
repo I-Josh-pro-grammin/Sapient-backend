@@ -3,12 +3,13 @@ import {
   ForbiddenException,
   Injectable,
 } from "@nestjs/common";
-import { PrismaService } from "../../src/prisma/prisma.service";
+import { PrismaService } from "src/prisma/prisma.service";
 import { AuthDto } from "./dto";
 import * as argon from "argon2";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { ApiBadRequestResponse, ApiResponse } from "@nestjs/swagger";
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,12 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
+  @ApiResponse({
+    description: 'User created successfully as required'
+  })
+  @ApiBadRequestResponse({
+    description: 'User could not register. Try again'
+  })
   async signup(dto: AuthDto) {
     try {
       //Create hashed password with argon
