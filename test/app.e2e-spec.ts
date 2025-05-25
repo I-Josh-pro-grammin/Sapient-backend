@@ -85,7 +85,6 @@ describe("App e2e", () => {
       const dto: EditUserDto = {
         firstname: "Funny",
         email: "funny@gmail.com",
-        lastname: "",
       };
 
       it("Should edit user", async () => {
@@ -106,13 +105,13 @@ describe("App e2e", () => {
   describe("Bookmarks", () => {
     describe("Create bookmark", () => {});
 
+    describe("Get bookmark by Id", () => {});
+
     describe("Get bookmarks", () => {});
 
-    describe("Get bookmark by id", () => {});
+    describe("Edit bookmark by id", () => {});
 
-    describe("Edit bookmark", () => {});
-
-    describe("Delete bookmark", () => {});
+    describe("Delete bookmark by id", () => {});
   });
 
   it.todo("should pass");
