@@ -10,6 +10,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { ApiBadRequestResponse, ApiResponse } from "@nestjs/swagger";
+import { LogoutDto } from "./dto/logout.dto";
 
 @Injectable()
 export class AuthService {
@@ -32,12 +33,14 @@ export class AuthService {
       //Save the new user in db
       const user = await this.prisma.user.create({
         data: {
+          username: dto.username,
           email: dto.email,
           hash,
+          role: dto.role,
         },
       });
 
-      //returning the user
+      //returning the user token
       return this.signToken(user.id, user.email);
     } catch (error) {
       if (
@@ -109,4 +112,10 @@ export class AuthService {
       access_token: token,
     };
   }
+
+  logout(res: LogoutDto) {
+    console.log(res)
+    return {message: "Logged out successfully"};
+  };
+
 }

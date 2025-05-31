@@ -2,10 +2,12 @@
 import {
   Body,
   Controller,
+  HttpCode,
   Post,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
+import { LogoutDto } from "./dto/logout.dto";
 // import { Throttle } from "@nestjs/throttler";
 
 @Controller("auth")
@@ -32,4 +34,11 @@ export class AuthController {
   ) {
     return this.authService.login(dto);
   }
+
+  @Post("logout")
+  @HttpCode(200)
+  logout(@Body() dto: LogoutDto) {
+    return this.authService.logout(dto);
+  }
+
 }

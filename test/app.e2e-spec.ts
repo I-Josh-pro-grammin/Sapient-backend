@@ -35,8 +35,10 @@ describe("App e2e", () => {
 
   describe("Auth", () => {
     const dto: AuthDto = {
-      email: "",
+      email: "izerejoshua94@gmail.com",
       password: "izere12",
+      username: "Izere",
+      role: "STUDENT",
     };
 
     describe("Signup", () => {
@@ -83,7 +85,7 @@ describe("App e2e", () => {
 
     describe("Edit me", () => {
       const dto: EditUserDto = {
-        firstname: "Funny",
+        username: "Funny",
         email: "funny@gmail.com",
       };
 
@@ -96,22 +98,10 @@ describe("App e2e", () => {
         })
         .withBody(dto)
         .expectStatus(200)
-        .expectBody(dto.firstname)
+        .expectBody(dto.username)
         .expectBody(dto.email);
       });
     });
-  });
-
-  describe("Bookmarks", () => {
-    describe("Create bookmark", () => {});
-
-    describe("Get bookmark by Id", () => {});
-
-    describe("Get bookmarks", () => {});
-
-    describe("Edit bookmark by id", () => {});
-
-    describe("Delete bookmark by id", () => {});
   });
 
   it.todo("should pass");

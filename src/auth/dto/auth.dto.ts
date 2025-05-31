@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, IsEnum, IsOptional } from "class-validator";
+import { Role } from "@prisma/client";
 
 export class AuthDto {
   @ApiProperty({
@@ -20,4 +21,24 @@ export class AuthDto {
   @IsString()
   @IsNotEmpty()
   password!: string;
+
+  @ApiProperty({
+    description: "User's name",
+    name: "Izere",
+    required: true
+  })
+  @IsString()
+  @IsOptional()
+  username!: string;
+  
+  @ApiProperty({
+    description: "User role",
+    name: "TEACHER",
+    required: true,
+    enum: Role
+  })
+  @IsOptional()
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  @IsEnum(Role)
+  role!: Role;
 }
