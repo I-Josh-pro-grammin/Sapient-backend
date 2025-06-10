@@ -16,6 +16,14 @@ datasource db {
 enum Role {
   STUDENT
   TEACHER
+  ADMIN
+  USER
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
 }
 
 model User {
@@ -31,6 +39,10 @@ model User {
 
   teacherProfile TeacherProfile?
   studentProfile StudentProfile?
+
+  // New relations
+  progress UserCourseProgress[]
+  ratings  CourseRating[]
 
   @@map("users")
 }
@@ -49,4 +61,54 @@ model StudentProfile {
 
   userId Int  @unique
   user   User @relation(fields: [userId], references: [id])
+}
+
+// New models
+model Course {
+  id            Int      @id @default(autoincrement())
+  title         String
+  category      String
+  level         Level
+  duration      Int // Duration in weeks
+  studentsCount Int      @default(0)
+  rating        Float    @default(0.0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  modules  CourseModule[]
+  progress UserCourseProgress[]
+  ratings  CourseRating[]
+}
+
+model CourseModule {
+  id       Int    @id @default(autoincrement())
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+  title    String
+  content  String
+  order    Int
+}
+
+model UserCourseProgress {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    Int
+  currentStep Int      @default(0)
+  completed   Boolean  @default(false)
+  startedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  rating      Int? // optional rating
+}
+
+model CourseRating {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  Int
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
 }

@@ -117,5 +117,4 @@ export class AuthService {
     console.log(res)
     return {message: "Logged out successfully"};
   };
-
 }

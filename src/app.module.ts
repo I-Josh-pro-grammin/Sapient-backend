@@ -8,6 +8,7 @@ import { ConfigModule } from "@nestjs/config";
 //   ThrottlerModule,
 // } from "@nestjs/throttler";
 // import { APP_GUARD } from "@nestjs/core";
+import { CoursesModule } from './courses/courses.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ConfigModule } from "@nestjs/config";
     AuthModule,
     UserModule,
     PrismaModule,
+    CoursesModule,
   ],
   // providers: [
   //   {
