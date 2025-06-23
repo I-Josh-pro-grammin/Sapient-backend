@@ -41,7 +41,7 @@ export class AuthService {
       });
 
       //returning the user token
-      return this.signToken(user.id, user.email);
+      return this.signToken(user.id, user.email, user.role);
     } catch (error) {
       if (
         error instanceof
@@ -84,18 +84,20 @@ export class AuthService {
       );
     }
 
-    return this.signToken(user.id, user.email);
+    return this.signToken(user.id, user.email, user.role);
   }
 
   async signToken(
     userId: number,
     email: string,
+    role: string,
   ): Promise<{
     access_token: string;
   }> {
     const payload = {
       sub: userId,
       email,
+      role: role
     };
 
     const secret = this.config.get("JWT_SECRET");
