@@ -11,6 +11,7 @@ import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { ApiBadRequestResponse, ApiResponse } from "@nestjs/swagger";
 import { LogoutDto } from "./dto/logout.dto";
+import { LoginDto } from "./dto/login.dto";
 
 @Injectable()
 export class AuthService {
@@ -57,7 +58,7 @@ export class AuthService {
     }
   }
 
-  async login(dto: AuthDto) {
+  async login(dto: LoginDto) {
     //Find the user by email
     const user =
       await this.prisma.user.findUnique({

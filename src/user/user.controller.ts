@@ -20,7 +20,8 @@ export class UserController {
   getMe(@GetUser() user: User) {
     return  this.userService.getMe(user);
   }
-
+  
+  @UseGuards(JwtGuard)
   @Put('/edit/:id')
   @UseInterceptors(
     FileInterceptor('image', {
@@ -56,6 +57,12 @@ export class UserController {
     const imagePath = file ? `/uploads/profile-images/${file.filename}` : undefined;
     console.log('Image Path:', imagePath); // 👈 You said this is undefined
     return this.userService.editUser(+id, { ...dto, image: imagePath });
+  }
+ 
+  @UseGuards(JwtGuard)
+  @Get('')
+  async getUsers() {
+    return this.userService.getUsers();
   }
   
 }

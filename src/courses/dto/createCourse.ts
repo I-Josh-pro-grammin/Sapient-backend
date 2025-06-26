@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Level } from "@prisma/client";
-import { IsNotEmpty, IsString } from "class-validator"
+import { IsNotEmpty, IsOptional, IsString } from "class-validator"
 
 export class CreateCourseDto {
   
@@ -12,10 +12,14 @@ export class CreateCourseDto {
   
   @IsString()
   level!: Level;
+
+  @IsString()
+  @IsNotEmpty()
+  description!: string;
   
   @IsNotEmpty()
   duration!: number;
   
-  @IsNotEmpty()
+  @IsOptional()
   studentsCount!: number;
 }

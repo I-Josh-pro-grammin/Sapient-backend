@@ -8,6 +8,7 @@ import {
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
 import { LogoutDto } from "./dto/logout.dto";
+import { LoginDto } from "./dto/login.dto";
 // import { Throttle } from "@nestjs/throttler";
 
 @Controller("auth")
@@ -30,7 +31,7 @@ export class AuthController {
   @Post("login")
   login(
     @Body()
-    dto: AuthDto,
+    dto: LoginDto,
   ) {
     return this.authService.login(dto);
   }

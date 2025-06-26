@@ -14,8 +14,6 @@ datasource db {
 }
 
 enum Role {
-  STUDENT
-  TEACHER
   ADMIN
   USER
 }
@@ -66,9 +64,10 @@ model StudentProfile {
 // New models
 model Course {
   id            Int      @id @default(autoincrement())
-  title         String
+  title         String   @unique()
   category      String
   level         Level
+  description   String
   duration      Int // Duration in weeks
   studentsCount Int      @default(0)
   rating        Float    @default(0.0)
