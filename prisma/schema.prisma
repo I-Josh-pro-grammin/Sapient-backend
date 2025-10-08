@@ -14,8 +14,9 @@ datasource db {
 }
 
 enum Role {
+  STUDENT
   ADMIN
-  USER
+  SUPERADMIN
 }
 
 
