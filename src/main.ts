@@ -9,6 +9,8 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    app.setBaseViewsDir(join(__dirname, 'auth/mailer/templates'));
+    app.setViewEngine('ejs');
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

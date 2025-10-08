@@ -20,13 +20,16 @@ enum Role {
 }
 
 
-model User {
+model User{
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   username String  @unique
   institutional_email    String
+  isVerified             Boolean @default(false)
+  verificationToken      String?
+  tokenExpiration        DateTime?
   hash     String
   role     Role   @default(STUDENT)
 
