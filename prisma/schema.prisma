@@ -28,7 +28,7 @@ model User {
   username String  @unique
   institutional_email    String
   hash     String
-  role     Role
+  role     Role   @default(STUDENT)
 
   @@map("users")
 }
