@@ -9,20 +9,19 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    app.setBaseViewsDir(join(__dirname, 'auth/mailer/templates'));
+    app.setViewEngine('ejs');
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
     }),
   );
 
-  // app.useStaticAssets(join(__dirname , '../../', 'uploads'), {
-  //   prefix: '/uploads/',
-  // });
-
-  // app.enableCors({
-  //   origin: 'http://localhost:5173',
-  //   credentials: true,
-  // })
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   // Swagger configuration
   const config = new DocumentBuilder()

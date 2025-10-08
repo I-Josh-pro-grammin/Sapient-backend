@@ -27,10 +27,11 @@ model User{
 
   username String  @unique
   institutional_email    String
-  hash                   String
-  role                   Role
   isVerified             Boolean @default(false)
   verificationToken      String?
   tokenExpiration        DateTime?
+  hash     String
+  role     Role   @default(STUDENT)
+
   @@map("users")
 }
