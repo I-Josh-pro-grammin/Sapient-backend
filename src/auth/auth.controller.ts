@@ -33,8 +33,14 @@ export class AuthController {
 
   @Post("logout")
   async logout(@Res({ passthrough: true }) res) {
-    res.clearCookie?.("refresh_token");
+    try {
+      res.clearCookie("refresh_token");
     return { message: "Logged out successfully" };
+    } catch (error) {
+      res.status(500).json({
+        error: "Logout failed"
+      })
+    }
   }
 
 }
