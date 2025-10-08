@@ -2,7 +2,6 @@ import {
   ForbiddenException,
   Injectable,
 } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
 import { AuthDto } from "./dto";
 import * as argon from "argon2";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
@@ -10,6 +9,9 @@ import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { ApiBadRequestResponse, ApiResponse } from "@nestjs/swagger";
 import { LoginDto } from "./dto/login.dto";
+import { PrismaService } from "../prisma/prisma.service";
+import { MailerService } from "./mailer/mailer.service";
+import { generateVerificationToken } from "../utils/verify";
 
 @Injectable()
 export class AuthService {
@@ -17,6 +19,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
+    private readonly mailerService: MailerService
   ) {}
 
   @ApiResponse({
@@ -29,6 +32,10 @@ export class AuthService {
     try {
       //Create hashed password with argon
       const hash = await argon.hash(dto.password);
+
+      //Generate verification token
+      const verificationToken = generateVerificationToken()
+
       //Save the new user in db
       const user = await this.prisma.user.create({
         data: {
@@ -36,8 +43,11 @@ export class AuthService {
           institutional_email: dto.institutional_email,
           hash,
           role: dto.role,
+          verificationToken
         },
       });
+
+      await this.mailerService.sendVerificationEmail('blessedwinner66@gmail.com', verificationToken)
 
       //returning the user token
       return this.signToken(user.id, user.institutional_email, user.role);

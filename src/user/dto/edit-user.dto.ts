@@ -11,15 +11,6 @@ export class EditUserDto {
   @IsOptional()
   username?: string;
 
-  // @ApiProperty({
-  //   description: "The last name of the user",
-  //   example: "Doe",
-  //   required: false,
-  // })
-  // @IsString()
-  // @IsOptional()
-  // lastname?: string;
-
   @ApiProperty({
     description: "The email of the user",
     example: "john.doe@example.com",
