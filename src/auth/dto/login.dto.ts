@@ -1,11 +1,12 @@
-/* eslint-disable prettier/prettier */
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 
-/* eslint-disable prettier/prettier */
 export  class LoginDto {
   @IsNotEmpty()
+  username!: string  
+
+  @IsNotEmpty()
   @IsEmail()
-  email!: string;
+  institutional_email!: string;
 
   @IsString()
   @IsNotEmpty()

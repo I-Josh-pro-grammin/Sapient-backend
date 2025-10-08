@@ -15,14 +15,14 @@ async function bootstrap() {
     }),
   );
 
-  app.useStaticAssets(join(__dirname , '../../', 'uploads'), {
-    prefix: '/uploads/',
-  });
+  // app.useStaticAssets(join(__dirname , '../../', 'uploads'), {
+  //   prefix: '/uploads/',
+  // });
 
-  app.enableCors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-  })
+  // app.enableCors({
+  //   origin: 'http://localhost:5173',
+  //   credentials: true,
+  // })
 
   // Swagger configuration
   const config = new DocumentBuilder()
@@ -35,7 +35,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 5000);
 }
 
 void bootstrap();

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import {
   ForbiddenException,
   Injectable,
@@ -10,7 +9,6 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { ApiBadRequestResponse, ApiResponse } from "@nestjs/swagger";
-import { LogoutDto } from "./dto/logout.dto";
 import { LoginDto } from "./dto/login.dto";
 
 @Injectable()
@@ -35,14 +33,14 @@ export class AuthService {
       const user = await this.prisma.user.create({
         data: {
           username: dto.username,
-          email: dto.email,
+          institutional_email: dto.institutional_email,
           hash,
           role: dto.role,
         },
       });
 
       //returning the user token
-      return this.signToken(user.id, user.email, user.role);
+      return this.signToken(user.id, user.institutional_email, user.role);
     } catch (error) {
       if (
         error instanceof
@@ -63,7 +61,7 @@ export class AuthService {
     const user =
       await this.prisma.user.findUnique({
         where: {
-          email: dto.email,
+          username: dto.username,
         },
       });
 
@@ -85,7 +83,7 @@ export class AuthService {
       );
     }
 
-    return this.signToken(user.id, user.email, user.role);
+    return this.signToken(user.id, user.institutional_email, user.role);
   }
 
   async signToken(
@@ -116,8 +114,5 @@ export class AuthService {
     };
   }
 
-  logout(res: LogoutDto) {
-    console.log(res)
-    return {message: "Logged out successfully"};
-  };
+  
 }

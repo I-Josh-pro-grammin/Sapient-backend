@@ -18,96 +18,16 @@ enum Role {
   USER
 }
 
-enum Level {
-  BEGINNER
-  INTERMEDIATE
-  ADVANCED
-}
 
 model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email    String  @unique
+  username String  @unique
+  institutional_email    String
   hash     String
-  username String
-  image    String?
   role     Role
 
-  teacherProfile TeacherProfile?
-  studentProfile StudentProfile?
-
-  // New relations
-  progress UserCourseProgress[]
-  ratings  CourseRating[]
-
   @@map("users")
-}
-
-model TeacherProfile {
-  id          Int    @id @default(autoincrement())
-  teacherName String
-
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id])
-}
-
-model StudentProfile {
-  id          Int    @id @default(autoincrement())
-  studentName String
-
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id])
-}
-
-// New models
-model Course {
-  id            Int      @id @default(autoincrement())
-  title         String   @unique()
-  category      String
-  level         Level
-  description   String
-  duration      Int // Duration in weeks
-  studentsCount Int      @default(0)
-  rating        Float    @default(0.0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  modules  CourseModule[]
-  progress UserCourseProgress[]
-  ratings  CourseRating[]
-}
-
-model CourseModule {
-  id       Int    @id @default(autoincrement())
-  course   Course @relation(fields: [courseId], references: [id])
-  courseId Int
-  title    String
-  content  String
-  order    Int
-}
-
-model UserCourseProgress {
-  id          Int      @id @default(autoincrement())
-  user        User     @relation(fields: [userId], references: [id])
-  userId      Int
-  course      Course   @relation(fields: [courseId], references: [id])
-  courseId    Int
-  currentStep Int      @default(0)
-  completed   Boolean  @default(false)
-  startedAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  rating      Int? // optional rating
-}
-
-model CourseRating {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  course    Course   @relation(fields: [courseId], references: [id])
-  courseId  Int
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
 }

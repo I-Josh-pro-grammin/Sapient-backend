@@ -1,15 +1,13 @@
-/* eslint-disable prettier/prettier */
 import {
   Body,
   Controller,
   HttpCode,
   Post,
+  Res,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
-import { LogoutDto } from "./dto/logout.dto";
 import { LoginDto } from "./dto/login.dto";
-// import { Throttle } from "@nestjs/throttler";
 
 @Controller("auth")
 export class AuthController {
@@ -25,9 +23,6 @@ export class AuthController {
   }
 
   //Login Controller
-  //Using throttle to limit the number of logins
-  // @Throttle(5, 60)
-  //loging in
   @Post("login")
   login(
     @Body()
@@ -37,9 +32,9 @@ export class AuthController {
   }
 
   @Post("logout")
-  @HttpCode(200)
-  logout(@Body() dto: LogoutDto) {
-    return this.authService.logout(dto);
+  async logout(@Res({ passthrough: true }) res) {
+    res.clearCookie?.("refresh_token");
+    return { message: "Logged out successfully" };
   }
 
 }
