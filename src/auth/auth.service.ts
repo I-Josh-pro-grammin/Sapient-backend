@@ -66,12 +66,28 @@ export class AuthService {
   }
 
   //User verification
-  async verifyUser(token:string){
-    if(!token) throw new BadRequestException("Verification token is required")
+  async verifyUser(token: string) {
+    if (!token) {
+      throw new BadRequestException("Verification token is required");
+    }
 
-      const now = new Date()
-        
-      const updateResult = await this.prisma.user.updateMany({
+    const now = new Date();
+    
+    const existingUser = await this.prisma.user.findFirst({
+      where: { verificationToken: token },
+    });
+
+    if (existingUser && existingUser.isVerified) {
+      throw new BadRequestException("Account already verified.");
+    }
+
+    // Check if token is expired
+    if (existingUser && existingUser.tokenExpiration && existingUser.tokenExpiration < now) {
+      throw new BadRequestException("Verification token has expired.");
+    }
+
+    // Update user to verified
+    const updateResult = await this.prisma.user.updateMany({
       where: {
         verificationToken: token,
         isVerified: false,
@@ -86,18 +102,12 @@ export class AuthService {
         tokenExpiration: null,
       },
     });
-    if (updateResult.count === 0) {
-    const maybeUser = await this.prisma.user.findFirst({
-      where: { verificationToken: token },
-    });
 
-    if (maybeUser && maybeUser.isVerified) {
-      return { message: "Account already verified." };
+    if (updateResult.count === 0) {
+      throw new BadRequestException("Invalid or expired verification token.");
     }
 
-    throw new BadRequestException("Invalid or expired verification token.");
-  }
-  return { message:"Email verified successfully" }
+    return { message: "Email verified successfully" };
   }
 
 

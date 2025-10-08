@@ -7,7 +7,7 @@ import {
   Query,
   Res,
 } from "@nestjs/common";
-import { Response } from "@nestjs/common";
+import { Response } from "express";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
 import { retry } from "rxjs";
@@ -34,8 +34,22 @@ export class AuthController {
   }
 
   @Get('verify-email')
-  async verify(@Query('token') token: string) {
-    return await this.authService.verifyUser(token);
+  async verify(@Query('token') token: string, @Res() res: Response) {
+    try {
+      await this.authService.verifyUser(token);
+      // Render success template
+      res.render('verification-success', { 
+        message: 'Email verified successfully! You can now log in.',
+        title: 'Verification Successful'
+      });
+    } catch (error) {
+      // Render failure template
+      const errorMessage = error instanceof Error ? error.message : 'Verification failed. The token may be invalid or expired.';
+      res.render('verification-failed', { 
+        message: errorMessage,
+        title: 'Verification Failed'
+      });
+    }
   }
 
   @Post("logout")
