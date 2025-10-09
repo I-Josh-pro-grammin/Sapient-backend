@@ -2,10 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-<<<<<<< HEAD
   InternalServerErrorException,
-=======
->>>>>>> 4cf1270 (added the login functionality)
   UnauthorizedException,
 } from "@nestjs/common";
 import { AuthDto } from "./dto";
@@ -68,7 +65,7 @@ export class AuthService {
     }
   }
 
-<<<<<<< HEAD
+
   //User verification
   async verifyUser(token: string) {
     if (!token) {
@@ -166,7 +163,7 @@ export class AuthService {
         return { access_token: access_token, refresh_token: refresh_token, user: { id: user.id, email: user.institutional_email, role: user.role ?? "USER"} }
     } catch (err) {
       throw new UnauthorizedException('Invalid or expired refresh token');
-=======
+
   async login(dto: LoginDto) {
 
     const user = await this.prisma.user.findUnique({
@@ -185,12 +182,11 @@ export class AuthService {
 
     if (!pwMatches) {
       throw new ForbiddenException("Incorrect password");
->>>>>>> 4cf1270 (added the login functionality)
+
     }
   }
 
-<<<<<<< HEAD
-=======
+
 
 
   async signToken(
@@ -220,7 +216,7 @@ export class AuthService {
       access_token: token,
     };
   }
->>>>>>> 4cf1270 (added the login functionality)
+
 
   
 }
