@@ -2,6 +2,11 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+<<<<<<< HEAD
+  InternalServerErrorException,
+=======
+>>>>>>> 4cf1270 (added the login functionality)
+  UnauthorizedException,
 } from "@nestjs/common";
 import { AuthDto } from "./dto";
 import * as argon from "argon2";
@@ -63,58 +68,71 @@ export class AuthService {
     }
   }
 
-  async login(dto: LoginDto) {
-    //Find the user by email
-    const user =
-      await this.prisma.user.findUnique({
-        where: {
-          username: dto.username,
-        },
-      });
-
-    if (!user) {
-      throw new ForbiddenException(
-        "Incorrect credentials",
-      );
+<<<<<<< HEAD
+  //User verification
+  async verifyUser(token: string) {
+    if (!token) {
+      throw new BadRequestException("Verification token is required");
     }
 
-    //Compare passwords
-    const pwMatches = await argon.verify(
-      user.hash,
-      dto.password,
-    );
-    //Throw error if not matching
-    if (!pwMatches) {
-      throw new ForbiddenException(
-        "Incorrect password",
-      );
+    const now = new Date();
+    
+    const existingUser = await this.prisma.user.findFirst({
+      where: { verificationToken: token },
+    });
+
+    if (existingUser && existingUser.isVerified) {
+      throw new BadRequestException("Account already verified.");
     }
 
-    return this.signToken(user.id, user.institutional_email, user.role);
+    // Check if token is expired
+    if (existingUser && existingUser.tokenExpiration && existingUser.tokenExpiration < now) {
+      throw new BadRequestException("Verification token has expired.");
+    }
+
+    // Update user to verified
+    const updateResult = await this.prisma.user.updateMany({
+      where: {
+        verificationToken: token,
+        isVerified: false,
+        OR: [
+          { tokenExpiration: null },
+          { tokenExpiration: { gte: now } },
+        ],
+      },
+      data: {
+        isVerified: true,
+        verificationToken: null,
+        tokenExpiration: null,
+      },
+    });
+
+    if (updateResult.count === 0) {
+      throw new BadRequestException("Invalid or expired verification token.");
+    }
+
+    return { message: "Email verified successfully" };
   }
 
-  async signToken(
-    userId: number,
-    email: string,
-    role: string,
-  ): Promise<{
-    access_token: string;
-  }> {
-    const payload = {
-      sub: userId,
-      email,
-      role: role
-    };
 
-    const secret = this.config.get("JWT_SECRET");
+  private async generateTokens(userId: number, username: string, email: string, role: string) {
+    const accessPayload = { sub: userId, email, role, username };
+    const refreshPayload = { sub: userId };
 
-    const token = await this.jwt.signAsync(
-      payload,
-      {
-        expiresIn: "1day",
-        secret: secret,
-      },
-    );
+    // Access token uses secret configured in JwtModule.registerAsync
+    const accessToken = await this.jwt.signAsync(accessPayload, {
+      expiresIn: '15m',
+    });
+
+    // Refresh token uses a separate secret from env/config
+    const refreshSecret = this.config.get<string>('JWT_REFRESH_SECRET');
+    if (!refreshSecret) {
+      throw new InternalServerErrorException('JWT_REFRESH_SECRET is not defined');
+    }
+    const refreshToken = await this.jwt.signAsync(refreshPayload, {
+      expiresIn: '7d',
+      secret: refreshSecret,
+    });
 
     return {
       access_token: accessToken,
@@ -148,9 +166,61 @@ export class AuthService {
         return { access_token: access_token, refresh_token: refresh_token, user: { id: user.id, email: user.institutional_email, role: user.role ?? "USER"} }
     } catch (err) {
       throw new UnauthorizedException('Invalid or expired refresh token');
+=======
+  async login(dto: LoginDto) {
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        username: dto.username,
+        institutional_email: dto.institutional_email
+      },
+    });
+
+    if (!user) {
+      throw new ForbiddenException("Incorrect credentials");
+    }
+
+    
+    const pwMatches = await argon.verify(user.hash, dto.password);
+
+    if (!pwMatches) {
+      throw new ForbiddenException("Incorrect password");
+>>>>>>> 4cf1270 (added the login functionality)
     }
   }
 
+<<<<<<< HEAD
+=======
+
+
+  async signToken(
+    userId: number,
+    email: string,
+    role: string,
+  ): Promise<{
+    access_token: string;
+  }> {
+    const payload = {
+      sub: userId,
+      email,
+      role: role
+    };
+
+    const secret = this.config.get("JWT_SECRET");
+
+    const token = await this.jwt.signAsync(
+      payload,
+      {
+        expiresIn: "1day",
+        secret: secret,
+      },
+    );
+
+    return {
+      access_token: token,
+    };
+  }
+>>>>>>> 4cf1270 (added the login functionality)
 
   
 }
