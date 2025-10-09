@@ -166,7 +166,7 @@ export class AuthService {
 
   async login(dto: LoginDto) {
 
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findFirst({
       where: {
         username: dto.username,
         institutional_email: dto.institutional_email
@@ -182,8 +182,8 @@ export class AuthService {
 
     if (!pwMatches) {
       throw new ForbiddenException("Incorrect password");
-
     }
+    return this.generateTokens(user.id, user.username, user.institutional_email, user.role ?? 'USER');
   }
 
 
