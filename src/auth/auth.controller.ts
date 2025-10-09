@@ -56,7 +56,7 @@ export class AuthController {
         title: 'Verification Failed'
       });
     }
-
+  }
   // //Login Controller
   
   @Post("login")
