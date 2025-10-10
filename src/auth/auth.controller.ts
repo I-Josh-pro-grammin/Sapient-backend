@@ -10,7 +10,12 @@ import {
 import { Response } from "express";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
+
 import { retry } from "rxjs";
+
+import { LoginDto } from "./dto/login.dto";
+import { ApiOperation, ApiResponse } from "@nestjs/swagger";
+
 
 @Controller("auth")
 export class AuthController {
@@ -33,6 +38,7 @@ export class AuthController {
     })
   }
 
+
   @Get('verify-email')
   async verify(@Query('token') token: string, @Res() res: Response) {
     try {
@@ -51,7 +57,17 @@ export class AuthController {
       });
     }
   }
+  // //Login Controller
+  
+  @Post("login")
+  @ApiOperation({ summary: "User login" })
+  @ApiResponse({ status: 200, description: "Login successful" })
+  @ApiResponse({ status: 403, description: "Incorrect credentials" })
+  login(@Body() dto: LoginDto) {
+    return this.authService.login(dto);
+  }
 
+  
   @Post("logout")
   async logout(@Res({ passthrough: true }) res) {
     try {

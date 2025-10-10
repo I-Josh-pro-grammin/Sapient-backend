@@ -69,6 +69,7 @@ export class AuthService {
     }
   }
 
+
   //User verification
   async verifyUser(token: string) {
     if (!token) {
@@ -166,7 +167,58 @@ export class AuthService {
         return { access_token: access_token, refresh_token: refresh_token, user: { id: user.id, email: user.institutional_email, role: user.role ?? "USER"} }
     } catch (err) {
       throw new UnauthorizedException('Invalid or expired refresh token');
+
+  async login(dto: LoginDto) {
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        username: dto.username,
+        institutional_email: dto.institutional_email
+      },
+    });
+
+    if (!user) {
+      throw new ForbiddenException("Incorrect credentials");
     }
+
+    
+    const pwMatches = await argon.verify(user.hash, dto.password);
+
+    if (!pwMatches) {
+      throw new ForbiddenException("Incorrect password");
+    }
+    return this.generateTokens(user.id, user.username, user.institutional_email, user.role ?? 'USER');
+  }
+
+
+
+
+  async signToken(
+    userId: number,
+    email: string,
+    role: string,
+  ): Promise<{
+    access_token: string;
+  }> {
+    const payload = {
+      sub: userId,
+      email,
+      role: role
+    };
+
+    const secret = this.config.get("JWT_SECRET");
+
+    const token = await this.jwt.signAsync(
+      payload,
+      {
+        expiresIn: "1day",
+        secret: secret,
+      },
+    );
+
+    return {
+      access_token: token,
+    };
   }
 
 
