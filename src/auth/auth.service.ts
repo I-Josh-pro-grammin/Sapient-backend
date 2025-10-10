@@ -13,6 +13,7 @@ import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../prisma/prisma.service";
 import { MailerService } from "./mailer/mailer.service";
 import { generateVerificationToken } from "../utils/verify";
+import { LoginDto } from "./dto/login.dto";
 
 @Injectable()
 export class AuthService {
@@ -167,6 +168,8 @@ export class AuthService {
         return { access_token: access_token, refresh_token: refresh_token, user: { id: user.id, email: user.institutional_email, role: user.role ?? "USER"} }
     } catch (err) {
       throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+  }
 
   async login(dto: LoginDto) {
 

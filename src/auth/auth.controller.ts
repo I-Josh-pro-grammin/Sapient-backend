@@ -11,8 +11,6 @@ import { Response } from "express";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
 
-import { retry } from "rxjs";
-
 import { LoginDto } from "./dto/login.dto";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 
@@ -63,8 +61,19 @@ export class AuthController {
   @ApiOperation({ summary: "User login" })
   @ApiResponse({ status: 200, description: "Login successful" })
   @ApiResponse({ status: 403, description: "Incorrect credentials" })
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto);
+  async login(@Body() dto: LoginDto, @Res() res) {
+    const {access_token, refresh_token} = await this.authService.login(dto);
+
+    res.cookie("refresh_token", refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+
+    res.status(200).json({
+      message: "Login successful"
+    })
   }
 
   
