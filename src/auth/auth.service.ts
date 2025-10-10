@@ -27,6 +27,10 @@ export class AuthService {
     if(!dto.username || !dto.password || !dto.institutional_email) {
       throw new BadRequestException("username, institutional_email and password are required");
     }
+
+    if(dto.role === "SUPERADMIN") {
+      throw new BadRequestException("You cannot create another super admin")
+    }
     
     const hash = await argon.hash(dto.password);
     const verificationToken = generateVerificationToken()
