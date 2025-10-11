@@ -4,9 +4,9 @@ import { PrismaClient } from '@prisma/client';
 @Injectable()
 export class AdminService {
   constructor(private prisma: PrismaClient) {}
-  
+
   async approveNotes (notes_id: number) {
-    return await this.prisma.notes.Update({
+    return await this.prisma.note.update({
       where: {
         id: notes_id
       },
