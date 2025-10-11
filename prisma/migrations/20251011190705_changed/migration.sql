@@ -1,0 +1,5 @@
+-- AlterEnum
+ALTER TYPE "Status" ADD VALUE 'REJECTED';
+
+-- AlterTable
+ALTER TABLE "note" ALTER COLUMN "status" SET DEFAULT 'PENDING';

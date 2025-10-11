@@ -19,10 +19,13 @@ enum Role {
   SUPERADMIN
 }
 
+
 enum Status {
   APPROVED
   PENDING
+  REJECTED
 }
+
 
 
 model User{
@@ -37,14 +40,18 @@ model User{
   tokenExpiration        DateTime?
   hash     String
   role     Role   @default(STUDENT)
+  status   Status @default(PENDING)
+  notes    Note[] @relation("StudentNotes")
 
   @@map("users")
 }
 
-model note{
+model Note{
   id    Int @id   @default(autoincrement())
   studentId   Int  
+  student   User     @relation("StudentNotes", fields: [studentId], references: [id])
   status Status @default(PENDING)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  @@map("note")
 }
