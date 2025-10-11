@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaService) {}
 
-  async approveNotes (notes_id: number) {
+  async approveNotes(notes_id: number) {
     return await this.prisma.note.update({
       where: {
         id: notes_id
@@ -15,4 +15,32 @@ export class AdminService {
       }
     })
   }
+
+  async rejectNotes(notes_id: number) {
+    return await this.prisma.note.update({
+      where: {
+        id: notes_id
+      },
+      data: {
+        status: "REJECTED"
+      }
+    })
+  }
+
+  async getApprovedNotes() {
+    return await this.prisma.note.findMany({
+      where: {
+        status: "APPROVED"
+      }
+    })
+  }
+
+  async getPendingNotes() {
+  return await this.prisma.note.findMany({
+       where: {
+        status: "PENDING"
+       }
+  })
+  }
+
 }
