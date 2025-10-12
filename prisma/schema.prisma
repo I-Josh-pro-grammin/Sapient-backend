@@ -14,6 +14,7 @@ datasource db {
 }
 
 
+
 enum Status {
   PENDING
   APPROVED
@@ -34,10 +35,10 @@ model User{
   hash     String
   schoolId           Int   
   school  School  @relation("SchoolUsers", fields: [schoolId], references: [id], onDelete: Cascade)
-
   role     Role   @default(STUDENT)
-
-  Notes Notes[] @relation("StudentNotes")
+  status   Status @default(PENDING)
+  rejectedAt  DateTime?
+  notes Notes[] @relation("StudentNotes")
   
 
   @@map("users")
@@ -70,7 +71,7 @@ model Notes {
   studentId     Int
   status        Status   @default(PENDING)
   
-  Student       User     @relation("StudentNotes", fields: [studentId], references: [id], onDelete: Cascade)
+  student       User     @relation("StudentNotes", fields: [studentId], references: [id], onDelete: Cascade)
 
   schoolId      Int
   school        School   @relation("SchoolNotes", fields: [schoolId], references: [id], onDelete: Cascade)
