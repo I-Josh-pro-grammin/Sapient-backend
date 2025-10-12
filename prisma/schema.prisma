@@ -13,18 +13,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  STUDENT
-  ADMIN
-  SUPERADMIN
-}
 
 enum Status {
-  APPROVED
   PENDING
+  APPROVED
   REJECTED
 }
-
 
 model User{
   id        Int      @id @default(autoincrement())
@@ -34,18 +28,70 @@ model User{
   username String  @unique
   institutional_email    String
   isVerified             Boolean @default(false)
+  approved               Boolean @default(true)
   verificationToken      String?
   tokenExpiration        DateTime?
   hash     String
+  schoolId           Int   
+  school  School  @relation("SchoolUsers", fields: [schoolId], references: [id], onDelete: Cascade)
+
   role     Role   @default(STUDENT)
+
+  Notes Notes[] @relation("StudentNotes")
+  
 
   @@map("users")
 }
 
-model note{
-  id    Int @id   @default(autoincrement())
-  studentId   Int  
-  status Status @default(PENDING)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+model School {
+  id            Int      @id @default(autoincrement())
+  name          String
+
+  users         User[]    @relation("SchoolUsers")
+  notes         Notes[]   @relation("SchoolNotes")
+}
+
+
+model Notes {
+  id            Int      @id @default(autoincrement())
+  title         String
+  subject       String
+  description   String
+  filePublicId  String   
+  fileUrl       String   
+  fileName      String?  
+  fileType      String?  
+  fileSize      Int?     
+  
+  isPaid        Boolean  @default(false)
+  price         Decimal? @db.Decimal(10, 2)
+  
+  studentId     Int
+  status        Status   @default(PENDING)
+  
+  Student       User     @relation("StudentNotes", fields: [studentId], references: [id], onDelete: Cascade)
+
+  schoolId      Int
+  school        School   @relation("SchoolNotes", fields: [schoolId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([schoolId])
+  @@index([studentId])
+  @@index([status])
+  @@index([subject])
+  @@index([isPaid])
+  @@map("notes")
+
+}
+
+
+
+
+enum Role {
+  STUDENT
+  ADMIN
+  SUPERADMIN
+
 }

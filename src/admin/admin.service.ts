@@ -6,7 +6,7 @@ export class AdminService {
   constructor(private prisma: PrismaService) {}
 
   async approveNotes(notes_id: number) {
-    return await this.prisma.note.update({
+    return await this.prisma.notes.update({
       where: {
         id: notes_id
       },
@@ -17,7 +17,7 @@ export class AdminService {
   }
 
   async rejectNotes(notes_id: number) {
-    return await this.prisma.note.update({
+    return await this.prisma.notes.update({
       where: {
         id: notes_id
       },
@@ -28,7 +28,7 @@ export class AdminService {
   }
 
   async getApprovedNotes() {
-    return await this.prisma.note.findMany({
+    return await this.prisma.notes.findMany({
       where: {
         status: "APPROVED"
       }
@@ -36,7 +36,7 @@ export class AdminService {
   }
 
   async getPendingNotes() {
-  return await this.prisma.note.findMany({
+  return await this.prisma.notes.findMany({
        where: {
         status: "PENDING"
        }
