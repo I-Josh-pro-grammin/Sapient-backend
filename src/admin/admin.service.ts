@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { Note, User } from '@prisma/client';
+import { Notes, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
@@ -9,7 +9,7 @@ export class AdminService {
 
   //Approve notes
   async approveNotes(notes_id: number) {
-    return await this.prisma.note.update({
+    return await this.prisma.notes.update({
       where: {
         id: notes_id
       },
@@ -20,8 +20,8 @@ export class AdminService {
   }
 
   // View all approved notes
-  async viewApprovedNotes():Promise<{notes:Note[]}>{
-      const notes = await this.prisma.note.findMany({
+  async viewApprovedNotes():Promise<{notes:Notes[]}>{
+      const notes = await this.prisma.notes.findMany({
         where:{ status: "APPROVED" }
       })
 
@@ -131,9 +131,10 @@ async deleteOldRejectedStudents(){
       })
 }
 
+
 //reject notes
   async rejectNotes(notes_id: number) {
-    return await this.prisma.note.update({
+    return await this.prisma.notes.update({
       where: {
         id: notes_id
       },
@@ -146,7 +147,7 @@ async deleteOldRejectedStudents(){
 
   // View all approved notes
   async getApprovedNotes() {
-    return await this.prisma.note.findMany({
+    return await this.prisma.notes.findMany({
       where: {
         status: "APPROVED"
       }
@@ -156,7 +157,7 @@ async deleteOldRejectedStudents(){
 
   //View all pending notes
   async getPendingNotes() {
-  return await this.prisma.note.findMany({
+  return await this.prisma.notes.findMany({
        where: {
         status: "PENDING"
        }
@@ -165,7 +166,7 @@ async deleteOldRejectedStudents(){
 
 // View activity logs
 async getActivityLogs(limit = 10){
-  const logs  = await this.prisma.note.findMany({
+  const logs  = await this.prisma.notes.findMany({
     orderBy: { createdAt:'desc' },
     take: limit,
     select:{

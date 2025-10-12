@@ -13,20 +13,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  STUDENT
-  ADMIN
-  SUPERADMIN
-}
 
 
 enum Status {
-  APPROVED
   PENDING
+  APPROVED
   REJECTED
 }
-
-
 
 model User{
   id        Int      @id @default(autoincrement())
@@ -36,25 +29,71 @@ model User{
   username String  @unique
   institutional_email    String
   isVerified             Boolean @default(false)
+  approved               Boolean @default(true)
   verificationToken      String?
   tokenExpiration        DateTime?
   hash     String
+  schoolId           Int   
+  school  School  @relation("SchoolUsers", fields: [schoolId], references: [id], onDelete: Cascade)
   role     Role   @default(STUDENT)
   status   Status @default(PENDING)
-  notes    Note[] @relation("StudentNotes")
   rejectedAt  DateTime?
+  notes Notes[] @relation("StudentNotes")
+  
 
   @@map("users")
 }
 
-model Note{
-  id    Int @id   @default(autoincrement())
-  title String
-  description  String
-  studentId   Int  
-  student   User     @relation("StudentNotes", fields: [studentId], references: [id])
-  status Status @default(PENDING)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  @@map("note")
+model School {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String
+
+  users         User[]    @relation("SchoolUsers")
+  notes         Notes[]   @relation("SchoolNotes")
+}
+
+
+model Notes {
+  id            Int      @id @default(autoincrement())
+  title         String
+  subject       String
+  description   String
+  filePublicId  String   
+  fileUrl       String   
+  fileName      String?  
+  fileType      String?  
+  fileSize      Int?     
+  
+  isPaid        Boolean  @default(false)
+  price         Decimal? @db.Decimal(10, 2)
+  
+  studentId     Int
+  status        Status   @default(PENDING)
+  
+  student       User     @relation("StudentNotes", fields: [studentId], references: [id], onDelete: Cascade)
+
+  schoolId      Int
+  school        School   @relation("SchoolNotes", fields: [schoolId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([schoolId])
+  @@index([studentId])
+  @@index([status])
+  @@index([subject])
+  @@index([isPaid])
+  @@map("notes")
+
+}
+
+
+
+
+enum Role {
+  STUDENT
+  ADMIN
+  SUPERADMIN
+
 }
