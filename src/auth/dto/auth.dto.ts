@@ -32,6 +32,15 @@ export class AuthDto {
   username!: string;
   
   @ApiProperty({
+    description: "User's name",
+    name: "Izere",
+    required: true
+  })
+  @IsString()
+  @IsOptional()
+  schoolId!: number;
+
+  @ApiProperty({
     description: "User role",
     name: "TEACHER",
     required: true,

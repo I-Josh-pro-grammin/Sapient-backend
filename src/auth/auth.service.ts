@@ -42,6 +42,7 @@ export class AuthService {
         data: {
           username: dto.username,
           institutional_email: dto.institutional_email,
+          schoolId: dto.schoolId,
           hash,
           role: dto.role || 'STUDENT',
           verificationToken,
