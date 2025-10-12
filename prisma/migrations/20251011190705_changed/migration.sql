@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "note" ALTER COLUMN "status" SET DEFAULT 'PENDING';
