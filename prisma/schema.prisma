@@ -42,6 +42,7 @@ model User{
   role     Role   @default(STUDENT)
   status   Status @default(PENDING)
   notes    Note[] @relation("StudentNotes")
+  rejectedAt  DateTime?
 
   @@map("users")
 }
