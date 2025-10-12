@@ -63,6 +63,34 @@ export class AdminService {
       }
 }
 
+async getActivityLogs(limit = 10){
+  const logs  = await this.prisma.note.findMany({
+    orderBy: { createdAt:'desc' },
+    take: limit,
+    select:{
+      id:true,
+      title:true,
+      status:true,
+      createdAt:true,
+      student:{
+         select: {
+          id:true,
+          username: true,
+          institutional_email:true
+         }
+      }
+    }
+  })
+
+  return logs.map(note => ({
+    id:note.id,
+    title:note.title,
+    status: note.status,
+    uploadedAt:note.createdAt,
+    owner: note.student
+  }))
+}
+
 
 }
 

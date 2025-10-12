@@ -6,22 +6,22 @@ export class AdminController {
   constructor(
     private adminService:AdminService
   ) {}
-  @Post("/notes/:id")
+  @Patch("/notes/:id/approve")
   approveNotes(@Param("id") id: string) {
     const notesId = Number(id);
-    if(!notesId) {
+    if(!notesId){
       throw new BadRequestException("notes id should be a number");
     }
 
     return this.adminService.approveNotes(notesId);
   }
 
-  @Get("notes/approved/All")
+  @Get("notes/approved/all")
   getApprovedNotes(){
     return this.adminService.viewApprovedNotes()
   }
 
-  @Get("/students/All")
+  @Get("/students/all")
   getStudents(){
       return this.adminService.getAllStudents()
   }
@@ -33,6 +33,11 @@ export class AdminController {
       throw new BadRequestException("User Id should be a number")
     }
     return this.adminService.approveStudent(userId)
+  }
+
+  @Get("/activity-logs")
+  getActivity(){
+      return this.adminService.getActivityLogs()
   }
 }
 

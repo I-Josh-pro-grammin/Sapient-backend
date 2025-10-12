@@ -48,6 +48,8 @@ model User{
 
 model Note{
   id    Int @id   @default(autoincrement())
+  title String
+  description  String
   studentId   Int  
   student   User     @relation("StudentNotes", fields: [studentId], references: [id])
   status Status @default(PENDING)
