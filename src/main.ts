@@ -6,22 +6,24 @@ import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { join } from "path";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import { PrismaExceptionFilter } from "./Filters/prisma.exceptionfilter";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
     app.setBaseViewsDir(join(__dirname, 'auth/mailer/templates'));
     app.setViewEngine('ejs');
+    app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
     }),
   );
 
-  app.enableCors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  });
+  app.useGlobalFilters( new PrismaExceptionFilter() )
 
   // Swagger configuration
   const config = new DocumentBuilder()
