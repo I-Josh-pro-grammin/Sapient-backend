@@ -45,24 +45,28 @@ export class AdminController {
   }
 
   // Get all students
+  @UseGuards(JwtGuard, AdminGuard)
   @Get("/students/all")
   getStudents() {
     return this.AdminService.getAllStudents();
   }
 
   //Get approved students
+  @UseGuards(JwtGuard, AdminGuard)
   @Get("/students/approved/all")
   getApprovedStudents(){
     return this.AdminService.getApprovedStudents()
   }
 
   //Get pending students
+  @UseGuards(JwtGuard, AdminGuard)
   @Get("/students/pending/all")
   getPendingStudents(){
     return this.AdminService.getPendingStudents()
   }
 
   // Approve a student by ID
+  @UseGuards(JwtGuard, AdminGuard)
   @Patch("/students/:id/approve")
   approveStudents(@Param('id') id: string) {
     const userId = Number(id);
@@ -73,6 +77,7 @@ export class AdminController {
   }
 
   // Get activity logs
+  @UseGuards(JwtGuard, AdminGuard)
   @Get("/activity-logs")
   getActivity() {
     return this.AdminService.getActivityLogs();

@@ -185,6 +185,10 @@ export class AuthService {
       throw new ForbiddenException("Incorrect credentials");
     }
 
+    if(user.status !== 'APPROVED'){
+      throw new ForbiddenException("Cannot log in. Account waiting for admin approval")
+    }
+
     
     const pwMatches = await argon.verify(user.hash, dto.password);
 
